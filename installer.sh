@@ -96,7 +96,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # Find the actual mount point
-ACTUAL_MOUNT_POINT=$(echo "$MOUNT_OUTPUT" | grep "/Volumes/" | awk '{print $NF}')
+ACTUAL_MOUNT_POINT=$(echo "$MOUNT_OUTPUT" | grep "/Volumes/" | sed 's/.*\(\/Volumes\/[^[:space:]]*\).*/\1/')
 if [ -z "$ACTUAL_MOUNT_POINT" ]; then
     echo "Error: Could not determine mount point"
     exit 1
