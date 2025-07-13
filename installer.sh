@@ -52,10 +52,31 @@ LATEST_VERSION=$(curl -s "https://api.github.com/repos/$REPO/releases/latest" | 
 if [ -z "$LATEST_VERSION" ]; then
     echo "Error: Could not fetch latest version info"
     echo "Falling back to direct download..."
-    LATEST_VERSION="v1.0.0"
+    LATEST_VERSION="v1.0.1"
 fi
 
 echo "Latest version: $LATEST_VERSION"
+
+# Check if MacX is already installed and get current version
+if [ -d "/Applications/$APP_NAME" ]; then
+    CURRENT_VERSION=$(defaults read "/Applications/$APP_NAME/Contents/Info.plist" CFBundleShortVersionString 2>/dev/null || echo "unknown")
+    echo "Current installed version: $CURRENT_VERSION"
+    
+    # Compare versions (remove 'v' prefix for comparison)
+    LATEST_NUM=$(echo "$LATEST_VERSION" | sed 's/^v//')
+    CURRENT_NUM=$(echo "$CURRENT_VERSION" | sed 's/^v//')
+    
+    if [ "$CURRENT_NUM" = "$LATEST_NUM" ]; then
+        echo "✅ MacX is already up to date (version $CURRENT_VERSION)!"
+        echo "No update needed."
+        exit 0
+    elif [ "$CURRENT_NUM" != "unknown" ]; then
+        echo "📦 Update available: $CURRENT_VERSION → $LATEST_VERSION"
+        echo "Proceeding with update..."
+    fi
+else
+    echo "MacX not found. Proceeding with fresh installation..."
+fi
 
 # Download URL
 DOWNLOAD_URL="https://raw.githubusercontent.com/$REPO/main/$DMG_NAME"
