@@ -40,7 +40,7 @@ while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 REPO="Yerexx/MacX-Releases"
 DMG_NAME="MacX_Installer.dmg"
 APP_NAME="MacX.app"
-MOUNT_POINT="/Volumes/MacX"
+MOUNT_POINT="/Volumes/MacX Installer 3"
 TEMP_DIR=$(mktemp -d)
 TEMP_DMG="$TEMP_DIR/$DMG_NAME"
 
@@ -58,7 +58,7 @@ fi
 echo "Latest version: $LATEST_VERSION"
 
 # Download URL
-DOWNLOAD_URL="https://raw.githubusercontent.com/$REPO/master/$DMG_NAME"
+DOWNLOAD_URL="https://raw.githubusercontent.com/$REPO/main/$DMG_NAME"
 
 echo "Downloading MacX $LATEST_VERSION..."
 if ! curl -L "$DOWNLOAD_URL" -o "$TEMP_DMG" --progress-bar; then
