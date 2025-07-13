@@ -1,0 +1,148 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+	:root {
+		color-scheme: dark;
+		--macx-primary: #6366f1;
+		--macx-secondary: #8b5cf6;
+		--macx-accent: #06b6d4;
+		--macx-bg: #0f172a;
+		--macx-surface: #1e293b;
+		--macx-text: #f8fafc;
+	}
+
+	body {
+		@apply bg-macx-bg text-macx-text antialiased;
+		min-height: 100vh;
+		font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+	}
+
+	* {
+		scrollbar-width: thin;
+		scrollbar-color: rgba(99, 102, 241, 0.3) transparent;
+	}
+
+	*::-webkit-scrollbar {
+		width: 6px;
+	}
+
+	*::-webkit-scrollbar-track {
+		background: transparent;
+	}
+
+	*::-webkit-scrollbar-thumb {
+		background: rgba(99, 102, 241, 0.3);
+		border-radius: 3px;
+	}
+
+	*::-webkit-scrollbar-thumb:hover {
+		background: rgba(99, 102, 241, 0.5);
+	}
+}
+
+@layer components {
+	/* MacX Button System */
+	.btn-primary {
+		@apply px-6 py-3 bg-macx-gradient hover:shadow-macx-hover text-white rounded-xl font-semibold transition-all duration-300 transform hover:scale-105;
+	}
+
+	.btn-secondary {
+		@apply px-6 py-3 bg-macx-surface hover:bg-macx-card text-macx-text rounded-xl font-medium transition-all duration-300 border border-macx-border;
+	}
+
+	.btn-ghost {
+		@apply px-4 py-2 text-macx-subtext hover:text-macx-text hover:bg-macx-surface/50 rounded-lg font-medium transition-all duration-200;
+	}
+
+	/* MacX Card System */
+	.macx-card {
+		@apply bg-macx-card border border-macx-border rounded-2xl shadow-macx-card backdrop-blur-sm;
+	}
+
+	.macx-card-hover {
+		@apply macx-card hover:shadow-macx-hover hover:border-macx-primary/30 transition-all duration-300;
+	}
+
+	.macx-panel {
+		@apply bg-macx-surface/80 border border-macx-border/50 rounded-xl backdrop-blur-md;
+	}
+
+	/* MacX Input System */
+	.macx-input {
+		@apply bg-macx-surface/50 border border-macx-border rounded-lg px-4 py-3 text-macx-text placeholder-macx-muted focus:outline-none focus:ring-2 focus:ring-macx-primary/50 focus:border-macx-primary/50 transition-all duration-200;
+	}
+
+	.macx-search {
+		@apply macx-input pl-10 bg-macx-surface/30;
+	}
+
+	/* Legacy support */
+	.glass-panel {
+		@apply macx-panel;
+	}
+
+	.glass-input {
+		@apply macx-input;
+	}
+}
+
+@layer utilities {
+	/* MacX Text Utilities */
+	.text-gradient {
+		@apply bg-clip-text text-transparent bg-macx-gradient;
+	}
+
+	.text-macx-gradient {
+		@apply bg-clip-text text-transparent bg-macx-gradient;
+	}
+
+	.text-glow {
+		text-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+	}
+
+	/* MacX Animation Utilities */
+	.macx-hover-lift {
+		@apply transition-all duration-300 hover:transform hover:scale-105 hover:shadow-macx-hover;
+	}
+
+	.macx-fade-in {
+		@apply animate-fade-in;
+	}
+
+	.macx-slide-up {
+		@apply animate-slide-up;
+	}
+
+	/* MacX Layout Utilities */
+	.macx-container {
+		@apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+	}
+
+	.macx-section {
+		@apply py-12 lg:py-16;
+	}
+
+	/* Scrollbar Utilities */
+	.hide-scrollbar {
+		-ms-overflow-style: none;
+		scrollbar-width: none;
+	}
+
+	.hide-scrollbar::-webkit-scrollbar {
+		display: none;
+	}
+
+	.glass {
+		@apply bg-dark-700/40;
+	}
+}
+
+.search-match-current {
+	background-color: rgba(165, 174, 212, 0.6) !important;
+}
+
+.search-match {
+	background-color: rgba(165, 174, 212, 0.3) !important;
+}
