@@ -53,7 +53,7 @@
 
 ```bash
 # One-line installation
-curl -s https://www.macx-ui.fun/api/v1/installer | bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/Yerexx/MacX-Releases/master/installer.sh)"
 ```
 
 ### Build from source
