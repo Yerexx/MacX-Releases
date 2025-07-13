@@ -28,19 +28,6 @@
   </a>
 </div>
 
-## <div align="center">✨ Preview</div>
-
-<div align="center">
-  <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
-    <img src=".github/assets/preview_1.png" alt="MacX Editor" width="390" />
-    <img src=".github/assets/preview_2.png" alt="MacX Settings" width="390" />
-    <img src=".github/assets/preview_3.png" alt="MacX Scripts Library" width="390" />
-    <img src=".github/assets/preview_4.png" alt="MacX Auto Execute" width="390" />
-    <img src=".github/assets/preview_5.png" alt="MacX Fast Flags" width="390" />
-    <img src=".github/assets/preview_6.png" alt="MacX command palette" width="390" />
-  </div>
-</div>
-
 ## <div align="center">📚 Documentation</div>
 
 <div align="center">
@@ -54,25 +41,6 @@
 ```bash
 # One-line installation
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/Yerexx/MacX-Releases/master/installer.sh)"
-```
-
-### Build from source
-
-```bash
-# Clone the repository
-git clone https://github.com/YourUsername/MacX.git
-
-# Navigate to the directory
-cd MacX
-
-# Install dependencies
-npm install
-
-# Start development
-npm run tauri:dev
-
-# Build for production
-npm run tauri:build:universal
 ```
 
 ## <div align="center">📄 License</div>
