@@ -8,13 +8,14 @@ NC='\033[0m'
 
 echo -e "${BLUE}"
 cat << "EOF"
- ░▒▓██████▓▒░   ░▒▓██████▓▒░  ░▒▓██████████████▓▒░  ░▒▓████████▓▒░ ░▒▓████████▓▒░ 
-░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░           ░▒▓█▓▒░     
-░▒▓█▓▒░        ░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░           ░▒▓█▓▒░     
-░▒▓█▓▒░        ░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░ ░▒▓██████▓▒░      ░▒▓█▓▒░     
-░▒▓█▓▒░        ░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░           ░▒▓█▓▒░     
-░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░           ░▒▓█▓▒░     
- ░▒▓██████▓▒░   ░▒▓██████▓▒░  ░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░ ░▒▓████████▓▒░    ░▒▓█▓▒░   
+ ███╗   ███╗ █████╗  ██████╗██╗  ██╗ 
+ ████╗ ████║██╔══██╗██╔════╝╚██╗██╔╝ 
+ ██╔████╔██║███████║██║      ╚███╔╝ 
+ ██║╚██╔╝██║██╔══██║██║      ██╔██╗ 
+ ██║ ╚═╝ ██║██║  ██║╚██████╗██╔╝ ██╗ 
+ ╚═╝     ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝ 
+                                     
+Modern Code Editor for macOS 
 EOF
 echo -e "${NC}"
 
@@ -28,7 +29,7 @@ if ! command -v curl &> /dev/null; then
     exit 1
 fi
 
-echo -e "${YELLOW}Administrator access is required for installation. Please enter your MacBook password.${NC}"
+echo -e "${YELLOW}Administrator access is required for installation. Please enter your password.${NC}"
 if ! sudo -v; then
     echo -e "${RED}Error: Failed to obtain administrator privileges${NC}"
     exit 1
@@ -37,32 +38,34 @@ fi
 echo -e "${BLUE}Checking for latest version...${NC}"
 TEMP_DMG=$(mktemp)
 
-LATEST_VERSION=$(curl -s https://www.comet-ui.fun/api/v1/status | grep -o '"version":"[^\"]*' | grep -o '[0-9.]*')
+# Try to get latest version from GitHub API, fallback to direct download
+LATEST_VERSION=$(curl -s https://api.github.com/repos/Yerexx/MacX-Releases/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/' | sed 's/v//')
 
 if [ -z "$LATEST_VERSION" ]; then
     echo -e "${RED}Error: Could not fetch latest version info${NC}"
-    exit 1
+    echo -e "${BLUE}Falling back to direct download...${NC}"
+    LATEST_VERSION="1.0.0"
 fi
 
 echo -e "${BLUE}Latest version: ${GREEN}v${LATEST_VERSION}${NC}"
-echo -e "${BLUE}Downloading Comet v${LATEST_VERSION}...${NC}"
+echo -e "${BLUE}Downloading MacX v${LATEST_VERSION}...${NC}"
 
-DOWNLOAD_URL="https://github.com/FrozenProductions/Comet/releases/download/v${LATEST_VERSION}/Comet_1.0.0_universal.dmg"
+DOWNLOAD_URL="https://github.com/Yerexx/MacX-Releases/raw/master/MacX_Installer.dmg"
 
 if ! curl -L -o "$TEMP_DMG" "$DOWNLOAD_URL" 2>/dev/null; then
-    echo -e "${RED}Error: Failed to download Comet v${LATEST_VERSION}${NC}"
+    echo -e "${RED}Error: Failed to download MacX v${LATEST_VERSION}${NC}"
     rm -f "$TEMP_DMG" 2>/dev/null
     exit 1
 fi
 
-echo -e "${BLUE}Installing Comet v${LATEST_VERSION}...${NC}"
+echo -e "${BLUE}Installing MacX v${LATEST_VERSION}...${NC}"
 
-if [ -d "/Applications/Comet.app" ]; then
-    sudo rm -rf "/Applications/Comet.app"
+if [ -d "/Applications/MacX.app" ]; then
+    sudo rm -rf "/Applications/MacX.app"
 fi
 
 hdiutil attach -nobrowse -noautoopen "$TEMP_DMG" > /dev/null
-MOUNT_POINT="/Volumes/Comet"
+MOUNT_POINT="/Volumes/MacX"
 
 if [ ! -d "$MOUNT_POINT" ]; then
     echo -e "${RED}Error: Failed to mount disk image${NC}"
@@ -70,30 +73,30 @@ if [ ! -d "$MOUNT_POINT" ]; then
     exit 1
 fi
 
-if [ ! -d "$MOUNT_POINT/Comet.app" ]; then
-    echo -e "${RED}Error: Could not find Comet.app in the mounted image${NC}"
+if [ ! -d "$MOUNT_POINT/MacX.app" ]; then
+    echo -e "${RED}Error: Could not find MacX.app in the mounted image${NC}"
     hdiutil detach "$MOUNT_POINT" >/dev/null 2>&1
     rm -f "$TEMP_DMG" 2>/dev/null
     exit 1
 fi
 
-if pgrep -f "Comet" > /dev/null; then
-    echo -e "${YELLOW}Closing Comet...${NC}"
-    osascript -e 'quit app "Comet"' 2>/dev/null
+if pgrep -f "MacX" > /dev/null; then
+    echo -e "${YELLOW}Closing MacX...${NC}"
+    osascript -e 'quit app "MacX"' 2>/dev/null
     sleep 2
 fi
 
-if [ -d "/Applications/Comet.app" ]; then
-    sudo rm -rf "/Applications/Comet.app"
+if [ -d "/Applications/MacX.app" ]; then
+    sudo rm -rf "/Applications/MacX.app"
 fi
 
-if sudo /usr/bin/ditto -rsrc "$MOUNT_POINT/Comet.app" "/Applications/Comet.app"; then
-    sudo chown -R $(whoami):staff "/Applications/Comet.app"
-    sudo chmod -R 777 "/Applications/Comet.app"
-    /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f /Applications/Comet.app
-    echo -e "${GREEN}✓ Comet v${LATEST_VERSION} has been installed successfully!${NC}"
+if sudo /usr/bin/ditto -rsrc "$MOUNT_POINT/MacX.app" "/Applications/MacX.app"; then
+    sudo chown -R $(whoami):staff "/Applications/MacX.app"
+    sudo chmod -R 755 "/Applications/MacX.app"
+    /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f /Applications/MacX.app
+    echo -e "${GREEN}✓ MacX v${LATEST_VERSION} has been installed successfully!${NC}"
 else
-    echo -e "${RED}Error: Failed to install Comet v${LATEST_VERSION}${NC}"
+    echo -e "${RED}Error: Failed to install MacX v${LATEST_VERSION}${NC}"
     hdiutil detach "$MOUNT_POINT" >/dev/null 2>&1
     rm -f "$TEMP_DMG" 2>/dev/null
     exit 1
@@ -102,7 +105,7 @@ fi
 hdiutil detach "$MOUNT_POINT" >/dev/null 2>&1
 rm -f "$TEMP_DMG" 2>/dev/null
 
-echo -e "${BLUE}Launching Comet v${LATEST_VERSION}...${NC}"
-open -a "Comet"
+echo -e "${BLUE}Launching MacX v${LATEST_VERSION}...${NC}"
+open -a "MacX"
 
-echo -e "${GREEN}Installation complete! Enjoy using Comet v${LATEST_VERSION}!${NC}"
+echo -e "${GREEN}Installation complete! Enjoy using MacX v${LATEST_VERSION}!${NC}"
