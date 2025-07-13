@@ -40,7 +40,7 @@ while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 REPO="Yerexx/MacX-Releases"
 DMG_NAME="MacX_Installer.dmg"
 APP_NAME="MacX.app"
-MOUNT_POINT="/Volumes/MacX Installer 3"
+MOUNT_POINT="/Volumes/MacX"
 TEMP_DIR=$(mktemp -d)
 TEMP_DMG="$TEMP_DIR/$DMG_NAME"
 
@@ -67,29 +67,36 @@ if ! curl -L "$DOWNLOAD_URL" -o "$TEMP_DMG" --progress-bar; then
 fi
 
 echo "Installing MacX $LATEST_VERSION..."
-
 # Mount the DMG
-if ! hdiutil attach -nobrowse -noautoopen "$TEMP_DMG" > /dev/null; then
+MOUNT_OUTPUT=$(hdiutil attach -nobrowse -noautoopen "$TEMP_DMG" 2>/dev/null)
+if [ $? -ne 0 ]; then
     echo "Error: Failed to mount disk image"
     exit 1
 fi
 
+# Find the actual mount point
+ACTUAL_MOUNT_POINT=$(echo "$MOUNT_OUTPUT" | grep "/Volumes/" | awk '{print $NF}')
+if [ -z "$ACTUAL_MOUNT_POINT" ]; then
+    echo "Error: Could not determine mount point"
+    exit 1
+fi
+
 # Copy the app to Applications
-if [ -d "$MOUNT_POINT/$APP_NAME" ]; then
+if [ -d "$ACTUAL_MOUNT_POINT/$APP_NAME" ]; then
     echo "Copying MacX to Applications folder..."
-    sudo ditto "$MOUNT_POINT/$APP_NAME" "/Applications/$APP_NAME"
+    sudo ditto "$ACTUAL_MOUNT_POINT/$APP_NAME" "/Applications/$APP_NAME"
     
     # Set proper permissions
     sudo chown -R root:wheel "/Applications/$APP_NAME"
     sudo chmod -R 755 "/Applications/$APP_NAME"
 else
     echo "Error: MacX.app not found in disk image"
-    hdiutil detach "$MOUNT_POINT" > /dev/null 2>&1
+    hdiutil detach "$ACTUAL_MOUNT_POINT" > /dev/null 2>&1
     exit 1
 fi
 
 # Unmount the DMG
-hdiutil detach "$MOUNT_POINT" > /dev/null
+hdiutil detach "$ACTUAL_MOUNT_POINT" > /dev/null
 
 # Clean up
 rm -rf "$TEMP_DIR"
