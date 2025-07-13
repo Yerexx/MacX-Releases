@@ -1,7 +1,0 @@
-{
-    "recommendations": [
-        "biomejs.biome",
-        "tauri-apps.tauri-vscode",
-        "rust-lang.rust-analyze"
-    ]
-}
